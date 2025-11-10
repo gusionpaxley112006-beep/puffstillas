@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Puffstillas - Dessert Time</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+/* Custom styles for background and font */
+body {
+font-family: 'Inter', sans-serif;
+background-color: #F8F8F8; /* Light off-white background */
+min-height: 100vh;
+display: flex;
+flex-direction: column;
+}
+/* Page content toggle - Key to single-page application feel */
+.page-content {
+display: none;
+flex-grow: 1;
+padding-bottom: 5rem; /* Space for fixed footer */
+}
+.active-page {
+display: block;
+}
+/* Active navigation link styling */
+.nav-link.active {
+background-color: #fbcfe8; /* Light pink background */
+color: #be185d; /* Darker pink text */
+font-weight: 700;
+box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+/* Flavor card hover effect */
+.flavor-card {
+transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+.flavor-card:hover {
+transform: translateY(-5px);
+box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+/* Mobile-friendly image styling for team members */
+.member-image {
+width: 100%;
+height: 100%;
+object-fit: cover;
+}
+</style>
+<script>
+// --- Data Definitions with LOCAL FILE PATHS ---
+
+// IMPORTANT: For these images to work, you must save the image files
+// (jackielyn.jpg, jessica.jpg, etc.) in the SAME FOLDER as puffstillas.html
+
+const memberData = [
+{ name: "Jackielyn B. Pabilane", role: "Manager", imageSrc: "jackielyn.jpg" },
+{ name: "Jessica Leigh B. Prego", role: "Cashier/Bookkeeper", imageSrc: "jessica.jpg" },
+{ name: "Andrei V. Pantig", role: "Production Staff", imageSrc: "andrei.jpg" },
+{ name: "AJ D. Prieto", role: "Production Staff", imageSrc: "aj.jpg" },
+{ name: "Aleck A. Parra", role: "Marketing Staff", imageSrc: "aleck.jpg" },
+{ name: "Jaypee B. Lopez", role: "Marketing Staff", imageSrc: "jaypee.jpg" },
+{ name: "Mark Wilson A. Prestado", role: "Packaging Staff", imageSrc: "mark.jpg" },
+{ name: "Daniella A. Punongbayan", role: "Utility Staff", imageSrc: "daniella.jpg" }
+];
+
+// --- Core Navigation and Rendering Functions ---
+
+function showPage(pageId) {
+document.querySelectorAll('.page-content').forEach(page => {
+page.classList.remove('active-page');
+});
+const activePage = document.getElementById(pageId);
+if (activePage) {
+activePage.classList.add('active-page');
+}
+document.querySelectorAll('.nav-link').forEach(link => {
+link.classList.remove('active');
+if (link.dataset.page === pageId) {
+link.classList.add('active');
+}
+});
+window.location.hash = pageId;
+window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderTeamMembers() {
+const container = document.getElementById('team-members-grid');
+if (!container) return;
+
+container.innerHTML = memberData.map(member => `
+<div class="bg-white p-4 rounded-xl shadow-lg border border-pink-100 transition duration-300 transform hover:scale-[1.02] text-center">
+<div class="w-24 h-24 sm:w-32 sm:h-32 mx-auto rounded-full overflow-hidden mb-4 border-4 border-pink-300">
+<img src="${member.imageSrc}"
+alt="${member.name} - ${member.role}"
+onerror="this.onerror=null; this.src='https://placehold.co/300x300/ccc/333?text=Team'"
+class="member-image image-loader">
+</div>
+<h3 class="text-lg font-bold text-pink-700 mb-1">${member.name}</h3>
+<p class="text-sm text-gray-500">${member.role}</p>
+</div>
+`).join('');
+}
+
+function renderFlavors() {
+// This function is no longer needed as the flavor cards are hardcoded in the HTML structure.
+}
+
+function loadImages() {
+// These paths assume the files are in the same directory as the HTML file.
+const logo = document.getElementById('header-logo');
+if (logo) {
+// Using the new logo.png file name
+logo.setAttribute('src', 'logo.png'); 
+}
+
+const banner = document.getElementById('home-banner');
+if (banner) {
+// Assuming banner.jpg is the correct file name for your banner
+// If you don't have a banner, you can change this back to a placeholder URL
+banner.setAttribute('src', 'banner.jpg');
+}
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+renderTeamMembers();
+renderFlavors();
+loadImages();
+
+const initialPage = window.location.hash ? window.location.hash.substring(1) : 'home';
+const validPages = ['home', 'about', 'team', 'flavors'];
+const pageToShow = validPages.includes(initialPage) ? initialPage : 'home';
+showPage(pageToShow);
+
+document.querySelectorAll('.nav-link').forEach(link => {
+link.addEventListener('click', (e) => {
+e.preventDefault();
+showPage(e.target.dataset.page);
+});
+});
+
+window.addEventListener('hashchange', () => {
+const newHash = window.location.hash ? window.location.hash.substring(1) : 'home';
+if (validPages.includes(newHash)) {
+showPage(newHash);
+} else {
+showPage('home');
+}
+});
+});
+</script>
+</head>
+<body class="flex flex-col min-h-screen">
+
+<header class="sticky top-0 z-50 bg-white shadow-lg">
+<nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-16">
+<div class="flex-shrink-0 flex items-center">
+<img id="header-logo"
+class="h-10 w-auto rounded-lg"
+src="https://placehold.co/40x40/fbcfe8/be185d?text=Logo"
+alt="Puffstillas Logo"
+onerror="this.onerror=null; this.src='https://placehold.co/40x40/fbcfe8/be185d?text=Logo'">
+<span class="ml-2 text-xl font-extrabold text-pink-600 hidden sm:block">Puffstillas</span>
+</div>
+<div class="flex space-x-1 sm:space-x-4">
+<a href="#home" data-page="home" class="nav-link text-gray-700 hover:bg-pink-50 px-3 py-2 rounded-lg text-sm font-medium transition duration-150">Home</a>
+<a href="#about" data-page="about" class="nav-link text-gray-700 hover:bg-pink-50 px-3 py-2 rounded-lg text-sm font-medium transition duration-150">About</a>
+<a href="#team" data-page="team" class="nav-link text-gray-700 hover:bg-pink-50 px-3 py-2 rounded-lg text-sm font-medium transition duration-150">Team</a>
+<a href="#flavors" data-page="flavors" class="nav-link text-gray-700 hover:bg-pink-50 px-3 py-2 rounded-lg text-sm font-medium transition duration-150">Flavors</a>
+</div>
+</div>
+</nav>
+</header>
+
+<main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 mt-6">
+
+<section id="home" class="page-content active-page">
+<div class="bg-white rounded-3xl shadow-2xl overflow-hidden mb-8">
+<img id="home-banner"
+class="w-full h-48 sm:h-72 object-cover object-center"
+src="https://placehold.co/1200x400/fbcfe8/be185d?text=Puffstillas+Banner"
+alt="Dessert Time Banner - Puffstillas"
+onerror="this.onerror=null; this.src='https://placehold.co/1200x400/fbcfe8/be185d?text=Welcome+to+Puffstillas'">
+<div class="p-6 sm:p-10 text-center">
+<h1 class="text-4xl sm:text-5xl font-extrabold text-pink-700 mb-4">DESSERT TIME</h1>
+<p class="text-xl text-gray-600 max-w-2xl mx-auto">
+Are you hungry? The best dessert choice for you is here! Indulge in our soft, fluffy, and flavorful Puffstillas today.
+</p>
+<a href="#flavors" data-page="flavors" class="nav-link mt-8 inline-block bg-pink-500 text-white text-lg font-bold py-3 px-8 rounded-full shadow-xl hover:bg-pink-600 transition duration-300 transform hover:scale-105">
+Discover Our Flavors
+</a>
+</div>
+</div>
+</section>
+
+<section id="about" class="page-content">
+<div class="bg-white p-6 sm:p-10 rounded-3xl shadow-2xl">
+<h2 class="text-3xl sm:text-4xl font-bold text-pink-700 mb-6 border-b-2 border-pink-300 pb-2 text-center">Our Sweet Story</h2>
+
+<div class="space-y-6 text-gray-700 text-lg max-w-4xl mx-auto">
+<p>
+Puffstillas was born from a simple, sweet dream: to create the **perfect, bite-sized dessert** that brings instant joy. We believe that a moment of dessert should be a moment of pure bliss.
+</p>
+<p>
+Our journey involves months of perfecting a unique recipe for the **softest sponge** and the **creamiest filling**. We are committed to using only the highest quality ingredients, ensuring every treat you bite into is fresh, flavorful, and unforgettable.
+</p>
+<div class="p-4 bg-pink-100 border-l-4 border-pink-500 rounded-lg shadow-inner">
+<p class="font-bold text-pink-700 mb-1">
+Location: BRGY. POBLACION UNO, CABUYAO, LAGUNA
+</p>
+<p class="text-pink-600">
+Hours: 8:00 AM to 5:00 PM | MON - FRI
+</p>
+</div>
+<p>
+Thank you for considering Puffstillas. We look forward to serving you the best dessert choice!
+</p>
+</div>
+</div>
+</section>
+
+<section id="team" class="page-content">
+<div class="bg-white p-6 sm:p-10 rounded-3xl shadow-2xl">
+<h2 class="text-3xl sm:text-4xl font-bold text-pink-700 mb-8 text-center border-b-2 border-pink-300 pb-2">Meet Our 8 Wonderful Team Members</h2>
+<p class="text-center text-gray-600 mb-10 max-w-3xl mx-auto">
+Meet the dedicated people who work tirelessly to bring you the perfect dessert. Their passion is the secret ingredient in every Puffstilla.
+</p>
+
+<div id="team-members-grid" class="grid grid-cols-2 md:grid-cols-4 gap-6">
+</div>
+</div>
+</section>
+
+<section id="flavors" class="page-content">
+<div class="bg-white p-6 sm:p-10 rounded-3xl shadow-2xl">
+<h2 class="text-3xl sm:text-4xl font-bold text-pink-700 mb-8 text-center border-b-2 border-pink-300 pb-2">Our Irresistible Flavor Collection</h2>
+
+<div id="flavors-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+    
+    <div class="flavor-card bg-white rounded-2xl shadow-xl overflow-hidden">
+        <img src="choco.jpg"
+            alt="Chocolate Cream Puffstilla"
+            onerror="this.onerror=null; this.src='https://placehold.co/400x300/fbcfe8/be185d?text=Image+Missing'"
+            class="w-full h-48 object-cover object-center">
+        <div class="p-4 text-center">
+            <h3 class="text-xl font-extrabold text-pink-700 mb-2">Chocolate Cream</h3>
+            <p class="text-gray-600 text-sm mb-4">Rich, creamy chocolate filling nestled in a soft white roll. Our best seller!</p>
+            <button class="w-full bg-pink-500 text-white font-medium py-2 px-4 rounded-full hover:bg-pink-600 transition duration-300 text-sm">
+                Order This Flavor
+            </button>
+        </div>
+    </div>
+    
+    <div class="flavor-card bg-white rounded-2xl shadow-xl overflow-hidden">
+        <img src="ube.jpg"
+            alt="Ube Delight Puffstilla"
+            onerror="this.onerror=null; this.src='https://placehold.co/400x300/fbcfe8/be185d?text=Image+Missing'"
+            class="w-full h-48 object-cover object-center">
+        <div class="p-4 text-center">
+            <h3 class="text-xl font-extrabold text-pink-700 mb-2">Ube Delight</h3>
+            <p class="text-gray-600 text-sm mb-4">Sweet and vibrant purple yam (Ube) cream with a rich center. A local favorite.</p>
+            <button class="w-full bg-pink-500 text-white font-medium py-2 px-4 rounded-full hover:bg-pink-600 transition duration-300 text-sm">
+                Order This Flavor
+            </button>
+        </div>
+    </div>
+
+    <div class="flavor-card bg-white rounded-2xl shadow-xl overflow-hidden">
+        <img src="mango.jpg"
+            alt="Mango Burst Puffstilla"
+            onerror="this.onerror=null; this.src='https://placehold.co/400x300/fbcfe8/be185d?text=Image+Missing'"
+            class="w-full h-48 object-cover object-center">
+        <div class="p-4 text-center">
+            <h3 class="text-xl font-extrabold text-pink-700 mb-2">Mango Burst</h3>
+            <p class="text-gray-600 text-sm mb-4">Tropical mango jam filling for a bright and tangy experience. Perfect for summer.</p>
+            <button class="w-full bg-pink-500 text-white font-medium py-2 px-4 rounded-full hover:bg-pink-600 transition duration-300 text-sm">
+                Order This Flavor
+            </button>
+        </div>
+    </div>
+
+    <div class="flavor-card bg-white rounded-2xl shadow-xl overflow-hidden">
+        <img src="matcha.jpg"
+            alt="Matcha Dream Puffstilla"
+            onerror="this.onerror=null; this.src='https://placehold.co/400x300/fbcfe8/be185d?text=Image+Missing'"
+            class="w-full h-48 object-cover object-center">
+        <div class="p-4 text-center">
+            <h3 class="text-xl font-extrabold text-pink-700 mb-2">Matcha Dream</h3>
+            <p class="text-gray-600 text-sm mb-4">Earthy matcha sponge and cream with a delicate green tea filling. Subtle and sophisticated.</p>
+            <button class="w-full bg-pink-500 text-white font-medium py-2 px-4 rounded-full hover:bg-pink-600 transition duration-300 text-sm">
+                Order This Flavor
+            </button>
+        </div>
+    </div>
+
+</div>
+
+<div class="mt-12 text-center p-6 bg-pink-100 rounded-xl border border-pink-300">
+<p class="text-xl font-extrabold text-pink-700">Can't choose? Try one of each! It's always DESSERT TIME.</p>
+</div>
+</div>
+</section>
+
+</main>
+
+<footer class="bg-gray-900 text-white p-4 mt-auto w-full">
+<div class="max-w-7xl mx-auto text-center text-sm flex flex-col sm:flex-row justify-between items-center">
+<p class="text-gray-400">&copy; 2025 Puffstillas. All rights reserved.</p>
+<p class="mt-2 sm:mt-0">
+Email: <a href="mailto:puffstillas.sweets@gmail.com" class="text-pink-400 hover:text-pink-300 transition duration-150 font-medium">puffstillas.sweets@gmail.com</a>
+</p>
+</div>
+</footer>
+
+</body>
+</html>
